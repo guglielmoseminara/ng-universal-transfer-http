@@ -21,10 +21,6 @@
         <img src="http://reactivex.io/assets/Rx_Logo_S.png"
              align="right" alt="ReactiveX logo" width="50" height="50" style="border:none;" />
     </a>
-    <a href="http://hapijs.com">
-        <img src="http://bit.ly/2lYPYPw"
-             align="right" alt="Hapijs logo" width="75" style="border:none;" />
-    </a>
     <a href="https://www.angular.io">
             <img src="https://angular.io/assets/images/logos/angular/angular.svg"
                  align="right" alt="Angular logo" width="75" style="border:none; margin-top:-5px;" />
@@ -33,6 +29,10 @@
 </div>
 
 # NG-Universal Transfer HTTP Cache Module
+
+This module is an enhancement of original [`TransferHttpCacheModule`](https://github.com/angular/universal/blob/master/modules/common) from `Angular Universal` team. He allows to cache all type of requests and not just `GET` and/or `HEAD`.
+
+It's written in full `Observable` with `lettable` versions.
 
 `TransferHttpCacheModule` installs a Http interceptor that avoids duplicate `HttpClient` requests on the client, for requests that were already made when the application was rendered on the server side.
 

@@ -1,11 +1,13 @@
 import { ApplicationRef, Injectable } from '@angular/core';
-import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
+import { HttpEvent, HttpHandler, HttpHeaders, HttpInterceptor, HttpRequest, HttpResponse } from '@angular/common/http';
 import { TransferState, makeStateKey, StateKey } from '@angular/platform-browser';
 
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
-import { first, filter, flatMap } from 'rxjs/operators';
+import { first, filter, flatMap, map, tap } from 'rxjs/operators';
 import { mergeStatic } from 'rxjs/operators/merge';
+
+import { createHash } from 'create-hash/browser';
 
 /**
  * Response interface
@@ -52,53 +54,126 @@ export class TransferHttpCacheInterceptor implements HttpInterceptor {
      * @return {Observable<HttpEvent<any>>}
      */
     intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-        const isCacheActive = of(this._isCacheActive);
-        return mergeStatic(
-            isCacheActive
-                .pipe(
-                    filter(_ => !_),
-                    flatMap(_ => next.handle(req))
-                ),
-            isCacheActive
-                .pipe(
-                    filter(_ => !!_),
-                    flatMap(_ =>
-                        this._createStoreKey(req)
+        return of(
+            of(this._isCacheActive)
+        )
+            .pipe(
+                flatMap(isCacheActive =>
+                    mergeStatic(
+                        isCacheActive
                             .pipe(
-                                flatMap(__ => this._transferStateProcess(req, next, __))
+                                filter(_ => !_),
+                                flatMap(_ => next.handle(req))
+                            ),
+                        isCacheActive
+                            .pipe(
+                                filter(_ => !!_),
+                                flatMap(_ => this._transferStateProcess(req, next))
                             )
                     )
                 )
-        );
+            );
     }
 
-    private _transferStateProcess(req: HttpRequest<any>,
-                                  next: HttpHandler,
-                                  storeKey: StateKey<TransferHttpResponse>): Observable<any> {
-        const hasKey = of(this._transferState.hasKey(storeKey));
-        return mergeStatic(
-            hasKey
-                .pipe(
-                    filter(_ => !!_)
+    private _transferStateProcess(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+        return this._createKey(req)
+            .pipe(
+                flatMap(storeKey =>
+                    of(of(this._transferState.hasKey(storeKey)))
+                        .pipe(
+                            flatMap(hasKey =>
+                                mergeStatic(
+                                    this._hasKeyProcess(hasKey, storeKey),
+                                    this._hasNotKeyProcess(req, next, hasKey, storeKey)
+                                )
+                            )
+                        )
                 ),
-            hasKey
-                .pipe(
-                    filter(_ => !_)
-                )
-        );
+            );
     }
 
     /**
-     * Creates store key
+     * Creates transfer state key's store
      *
      * @param {HttpRequest<any>} req
      *
-     * @return {Observable<StateKey<TransferHttpResponse>>}
+     * @returns {Observable<StateKey<TransferHttpResponse>>}
      *
      * @private
      */
-    private _createStoreKey(req: HttpRequest<any>): Observable<StateKey<TransferHttpResponse>> {
-        return of(makeStateKey<TransferHttpResponse>(JSON.stringify(req)));
+    private _createKey(req: HttpRequest<any>): Observable<StateKey<TransferHttpResponse>> {
+        this._id++;
+
+        return of(this._id)
+            .pipe(
+                map(id => createHash('sha256').update(`${JSON.stringify(req)}_${id}`).digest('hex')),
+                map(key => makeStateKey<TransferHttpResponse>(key))
+            );
+    }
+
+    /**
+     * Process when key exists in transfer state
+     *
+     * @param {Observable<boolean>} hasKey
+     * @param {StateKey<TransferHttpResponse>} storeKey
+     *
+     * @returns {Observable<HttpEvent<any>>}
+     *
+     * @private
+     */
+    private _hasKeyProcess(hasKey: Observable<boolean>, storeKey: StateKey<TransferHttpResponse>): Observable<HttpEvent<any>> {
+        return hasKey
+            .pipe(
+                filter(_ => !!_),
+                map(_ => this._transferState.get(storeKey, {} as TransferHttpResponse)),
+                map((response: TransferHttpResponse) => new HttpResponse<any>({
+                    body: response.body,
+                    headers: new HttpHeaders(response.headers),
+                    status: response.status,
+                    statusText: response.statusText,
+                    url: response.url,
+                }))
+            );
+    }
+
+    /**
+     * Process when key doesn't exist in transfer state
+     *
+     * @param {HttpRequest<any>} req
+     * @param {HttpHandler} next
+     * @param {Observable<boolean>} hasKey
+     * @param {StateKey<TransferHttpResponse>} storeKey
+     *
+     * @returns {Observable<HttpEvent<any>>}
+     *
+     * @private
+     */
+    private _hasNotKeyProcess(req: HttpRequest<any>,
+                              next: HttpHandler,
+                              hasKey: Observable<boolean>,
+                              storeKey: StateKey<TransferHttpResponse>): Observable<HttpEvent<any>> {
+        return hasKey
+            .pipe(
+                filter(_ => !_),
+                flatMap(_ =>
+                    next.handle(req)
+                        .pipe(
+                            tap((event: HttpEvent<any>) =>
+                                of(event)
+                                    .pipe(
+                                        filter(evt => evt instanceof HttpResponse),
+                                        tap((evt: HttpResponse<any>) => this._transferState.set(storeKey, {
+                                            body: evt.body,
+                                            headers: this._getHeadersMap(evt.headers),
+                                            status: evt.status,
+                                            statusText: evt.statusText,
+                                            url: evt.url!,
+                                        }))
+                                    )
+                            )
+                        )
+                )
+            )
     }
 
     /**
@@ -110,7 +185,7 @@ export class TransferHttpCacheInterceptor implements HttpInterceptor {
      *
      * @private
      */
-    /*private _getHeadersMap(headers: HttpHeaders): { [name: string]: string[] } {
+    private _getHeadersMap(headers: HttpHeaders): { [name: string]: string[] } {
         return headers.keys().reduce((acc, curr) => Object.assign(acc, { [curr]: headers.getAll(curr)! }), {});
-    }*/
+    }
 }
