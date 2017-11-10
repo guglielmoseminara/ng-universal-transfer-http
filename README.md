@@ -34,6 +34,18 @@ This module is an enhancement of original [`TransferHttpCacheModule`](https://gi
 
 It's written in full `Observable` with `lettable` versions.
 
+## Installation
+
+```bash
+$ yarn add @hapiness/ng-universal-transfer-http
+
+or
+
+$ npm install --save @hapiness/ng-universal-transfer-http
+```
+
+## Usage
+
 `TransferHttpCacheModule` installs a Http interceptor that avoids duplicate `HttpClient` requests on the client, for requests that were already made when the application was rendered on the server side.
 
 When the module is installed in the application `NgModule`, it will intercept `HttpClient` requests on the server and store the response in the `TransferState` key-value store. This is transferred to the client, which then uses it to respond to the same `HttpClient` requests on the client.
@@ -75,7 +87,7 @@ export class AppModule {
     * Lettable operators for `RxJS` 
     * Documentation
 
-[Back to top](#table-of-contents)
+[Back to top](#installation)
 
 ## Maintainers
 
@@ -97,10 +109,10 @@ export class AppModule {
     </tr>
 </table>
 
-[Back to top](#table-of-contents)
+[Back to top](#installation)
 
 ## License
 
 Copyright (c) 2017 **Hapiness** Licensed under the [MIT license](https://github.com/hapinessjs/hapiness/blob/master/LICENSE.md).
 
-[Back to top](#table-of-contents)
+[Back to top](#installation)
