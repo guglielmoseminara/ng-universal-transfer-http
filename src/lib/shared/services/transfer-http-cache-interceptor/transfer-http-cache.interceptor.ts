@@ -75,6 +75,16 @@ export class TransferHttpCacheInterceptor implements HttpInterceptor {
             );
     }
 
+    /**
+     * Transfer state process
+     *
+     * @param {HttpRequest<any>} req
+     * @param {HttpHandler} next
+     *
+     * @returns {Observable<HttpEvent<any>>}
+     *
+     * @private
+     */
     private _transferStateProcess(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         return this._createKey(req)
             .pipe(
