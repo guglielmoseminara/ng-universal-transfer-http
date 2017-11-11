@@ -38,7 +38,7 @@ export class TransferHttpCacheInterceptor implements HttpInterceptor {
         this._id = 0;
 
         // Stop using the cache if the application has stabilized, indicating initial rendering is complete.
-        of(this._appRef.isStable)
+        this._appRef.isStable
             .pipe(
                 first(_ => !!_),
             )
