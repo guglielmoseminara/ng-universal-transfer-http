@@ -127,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
 ```
 
 ## Change History
-* v5.0.0 (2017-11-10)
+* v5.0.0 (2017-11-13)
     * `Angular v5.0.0+`
     * Publish all features of the module
     * Lettable operators for `RxJS` 
