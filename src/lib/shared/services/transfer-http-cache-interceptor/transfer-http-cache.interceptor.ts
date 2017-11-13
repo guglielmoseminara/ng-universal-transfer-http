@@ -7,7 +7,7 @@ import { of } from 'rxjs/observable/of';
 import { first, filter, flatMap, map, tap } from 'rxjs/operators';
 import { mergeStatic } from 'rxjs/operators/merge';
 
-import { createHash } from 'create-hash/browser';
+import * as createHash from 'create-hash/browser';
 
 /**
  * Response interface
