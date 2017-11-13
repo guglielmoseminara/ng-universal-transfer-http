@@ -80,6 +80,52 @@ export class AppModule {
 }
 ```
 
+### src/app/app.server.module.ts:
+
+```typescript
+import { NgModule } from '@angular/core';
+import { ServerModule, ServerTransferStateModule } from '@angular/platform-server';
+import { ModuleMapLoaderModule } from '@nguniversal/module-map-ngfactory-loader';
+
+import { AppModule } from './app.module';
+import { AppComponent } from './app.component';
+
+@NgModule({
+  imports: [
+    // The AppServerModule should import your AppModule followed
+    // by the ServerModule from @angular/platform-server.
+    AppModule,
+    ServerModule,
+    ModuleMapLoaderModule,
+    ServerTransferStateModule
+  ],
+  // Since the bootstrapped component is not inherited from your
+  // imported AppModule, it needs to be repeated here.
+  bootstrap: [AppComponent]
+})
+export class AppServerModule {
+}
+```
+
+### src/main.ts:
+
+```typescript
+import { enableProdMode } from '@angular/core';
+import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+
+import { AppModule } from './app/app.module';
+import { environment } from './environments/environment';
+
+if (environment.production) {
+  enableProdMode();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  platformBrowserDynamic().bootstrapModule(AppModule)
+    .catch(err => console.log(err));
+});
+```
+
 ## Change History
 * v5.0.0 (2017-11-10)
     * `Angular v5.0.0+`
