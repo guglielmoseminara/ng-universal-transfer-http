@@ -1,4 +1,4 @@
-import { ApplicationRef, Inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { ApplicationRef, Inject, Injectable, Optional, PLATFORM_ID } from '@angular/core';
 import { HttpEvent, HttpHandler, HttpHeaders, HttpInterceptor, HttpRequest, HttpResponse } from '@angular/common/http';
 import { TransferState, makeStateKey, StateKey } from '@angular/platform-browser';
 import { isPlatformServer } from '@angular/common';
@@ -11,6 +11,8 @@ import { first, filter, flatMap, map, tap, defaultIfEmpty } from 'rxjs/operators
 import { mergeStatic } from 'rxjs/operators/merge';
 
 import * as createHash from 'create-hash/browser';
+
+import { NG_UNIVERSAL_TRANSFER_HTTP_CONFIG } from '../../tokens';
 
 /**
  * Response interface
@@ -48,17 +50,34 @@ export class TransferHttpCacheInterceptor implements HttpInterceptor {
      * @param {ApplicationRef} _appRef
      * @param {TransferState} _transferState
      * @param {Object} _platformId
+     * @param {boolean} _prodMode
      */
-    constructor(private _appRef: ApplicationRef, private _transferState: TransferState, @Inject(PLATFORM_ID) private _platformId: Object) {
+    constructor(private _appRef: ApplicationRef, private _transferState: TransferState,
+                @Inject(PLATFORM_ID) private _platformId: Object,
+                @Optional() @Inject(NG_UNIVERSAL_TRANSFER_HTTP_CONFIG) private _prodMode: boolean) {
         this._isCacheActive = true;
         this._id = 0;
         this._serverStateDataStoreKey = makeStateKey<ServerStateData[]>('server_state_data');
         this._lastIdStoreKey = makeStateKey<number>('server_state_last_id');
 
-        // Stop using the cache if the application has stabilized, indicating initial rendering is complete.
-        this._appRef.isStable
+        // Stop using the cache if the application has stabilized, indicating initial rendering is complete
+        // or if we are in development mode.
+        mergeStatic(
+            of(this._prodMode)
+                .pipe(
+                    filter(_ => _ !== null && _ !== true),
+                    tap(_ =>
+                        console.log('TransferHttpCacheModule is in the development mode. ' +
+                            'Enable the production mode with Server Side Rendering.')
+                    )
+                ),
+            this._appRef.isStable
+                .pipe(
+                    filter(_ => !!_),
+                )
+        )
             .pipe(
-                first(_ => !!_),
+                first()
             )
             .subscribe(_ => this._isCacheActive = false);
     }
@@ -117,12 +136,13 @@ export class TransferHttpCacheInterceptor implements HttpInterceptor {
                     ),
                     tap(_ => this._transferState.remove(this._serverStateDataStoreKey))
                 )
-        ).subscribe(
-            undefined,
-            e => {
-                throw(e);
-            }
-        );
+        )
+            .subscribe(
+                undefined,
+                e => {
+                    throw(e);
+                }
+            );
     }
 
     /**
