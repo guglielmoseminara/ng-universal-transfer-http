@@ -1,7 +1,8 @@
 {
     "extends": "./tsconfig.json",
     "compilerOptions": {
-        "outDir": ".",
+        "module": "es2015",
+        "outDir": "./dist",
         "rootDir": "./src"
     },
     "exclude": [

@@ -6,6 +6,7 @@
         "declaration": true,
         "noImplicitAny": false,
         "sourceMap": true,
+        "inlineSources": true,
         "noUnusedLocals": true,
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
