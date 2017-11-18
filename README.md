@@ -126,7 +126,44 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 ```
 
+## Development mode compatibility
+
+If you want to have `TransferHttpCacheModule` installed and compatible with `development` mode, you must to declare it like this:
+
+```typescript
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+import { TransferHttpCacheModule } from '@hapiness/ng-universal-transfer-http';
+import { environment } from '../environments/environment';
+
+import { AppComponent } from './app.component';
+
+@NgModule({
+  declarations: [
+    AppComponent
+  ],
+  imports: [
+    // Add .withServerTransition() to support Universal rendering.
+    // The application ID can be any identifier which is unique on
+    // the page.
+    BrowserModule.withServerTransition({ appId: 'ng-universal-example' }),
+    // Add TransferHttpCacheModule to install a Http interceptor and activate it only for production mode
+    TransferHttpCacheModule.enableOnProdMode(environment.production)
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule {
+}
+```
+
+Now, when you launch your application with `ng serve` all will work fine.
+
 ## Change History
+* v5.1.0 (2017-11-18)
+    * `Angular v5.0.2+`
+    * Development mode compatibility with `enableOnProdMode()` function 
+    * Documentation
 * v5.0.0 (2017-11-13)
     * `Angular v5.0.0+`
     * Publish all features of the module
