@@ -160,6 +160,9 @@ export class AppModule {
 Now, when you launch your application with `ng serve` all will work fine.
 
 ## Change History
+* v5.1.1 (2017-12-01)
+    * `Angular v5.0.4+`
+    * Documentation
 * v5.1.0 (2017-11-18)
     * `Angular v5.0.2+`
     * Development mode compatibility with `enableOnProdMode()` function 
