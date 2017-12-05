@@ -2,38 +2,42 @@
 # yarn lockfile v1
 
 
-"@angular/common@^5.0.4":
-  version "5.0.4"
-  resolved "https://registry.yarnpkg.com/@angular/common/-/common-5.0.4.tgz#da18997e966a893acf8b438da2839bb4c367ca08"
+"@angular/common@^5.0.5":
+  version "5.0.5"
+  resolved "https://registry.yarnpkg.com/@angular/common/-/common-5.0.5.tgz#a0530320beefa7b3446c7b5c6b10d7eda42b5998"
   dependencies:
     tslib "^1.7.1"
 
-"@angular/compiler-cli@^5.0.4":
-  version "5.0.4"
-  resolved "https://registry.yarnpkg.com/@angular/compiler-cli/-/compiler-cli-5.0.4.tgz#054ea67b438c52cc73aa62978b852d0938758ba1"
+"@angular/compiler-cli@^5.0.5":
+  version "5.0.5"
+  resolved "https://registry.yarnpkg.com/@angular/compiler-cli/-/compiler-cli-5.0.5.tgz#4c25ce6f0a04eac9e56007be3639f86172a9c7ea"
   dependencies:
     chokidar "^1.4.2"
     minimist "^1.2.0"
     reflect-metadata "^0.1.2"
     tsickle "^0.24.0"
 
-"@angular/compiler@^5.0.4":
-  version "5.0.4"
-  resolved "https://registry.yarnpkg.com/@angular/compiler/-/compiler-5.0.4.tgz#7baf38945703a4cab9128d71eb3c8e38c13be1a4"
+"@angular/compiler@^5.0.5":
+  version "5.0.5"
+  resolved "https://registry.yarnpkg.com/@angular/compiler/-/compiler-5.0.5.tgz#128329bd3a296116001480c56ecb95f0203aab07"
   dependencies:
     tslib "^1.7.1"
 
-"@angular/core@^5.0.4":
-  version "5.0.4"
-  resolved "https://registry.yarnpkg.com/@angular/core/-/core-5.0.4.tgz#e1a95b63dddbfb2acd70b89ab9c9662a18df6228"
+"@angular/core@^5.0.5":
+  version "5.0.5"
+  resolved "https://registry.yarnpkg.com/@angular/core/-/core-5.0.5.tgz#9f032aff4cfacce0e33629338466f93bba4cbec4"
   dependencies:
     tslib "^1.7.1"
 
-"@angular/platform-browser@^5.0.4":
-  version "5.0.4"
-  resolved "https://registry.yarnpkg.com/@angular/platform-browser/-/platform-browser-5.0.4.tgz#b809e9c72350675cbb5cfc25d9d92ecf00f597f6"
+"@angular/platform-browser@^5.0.5":
+  version "5.0.5"
+  resolved "https://registry.yarnpkg.com/@angular/platform-browser/-/platform-browser-5.0.5.tgz#71039c85b2bc5e3f4405151ffd1e2096c4f373a1"
   dependencies:
     tslib "^1.7.1"
+
+"@types/events@*":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@types/events/-/events-1.1.0.tgz#93b1be91f63c184450385272c47b6496fd028e02"
 
 "@types/fs-extra@^4.0.5":
   version "4.0.5"
@@ -41,9 +45,11 @@
   dependencies:
     "@types/node" "*"
 
-"@types/node@*", "@types/node@^8.0.53":
-  version "8.0.53"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-8.0.53.tgz#396b35af826fa66aad472c8cb7b8d5e277f4e6d8"
+"@types/node@*", "@types/node@^8.0.54":
+  version "8.0.54"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-8.0.54.tgz#3fd9357db4af388b79e03845340259440edffde6"
+  dependencies:
+    "@types/events" "*"
 
 abbrev@1:
   version "1.1.1"
@@ -1032,9 +1038,9 @@ ripemd160@^2.0.0:
     hash-base "^2.0.0"
     inherits "^2.0.1"
 
-rxjs@^5.5.2:
-  version "5.5.2"
-  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-5.5.2.tgz#28d403f0071121967f18ad665563255d54236ac3"
+rxjs@^5.5.3:
+  version "5.5.3"
+  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-5.5.3.tgz#b62227e74b84f4e77bdf440e50b5ee01a1bc7dcd"
   dependencies:
     symbol-observable "^1.0.1"
 
