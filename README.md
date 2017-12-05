@@ -160,6 +160,10 @@ export class AppModule {
 Now, when you launch your application with `ng serve` all will work fine.
 
 ## Change History
+* v5.1.2 (2017-12-05)
+    * `Angular v5.0.5+`
+    * `RxJS v5.5.3+`
+    * Documentation
 * v5.1.1 (2017-12-01)
     * `Angular v5.0.4+`
     * Documentation
