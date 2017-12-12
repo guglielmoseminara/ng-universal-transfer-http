@@ -29,8 +29,8 @@ interface TransferHttpResponse {
  * Server state interface
  */
 interface ServerStateData {
-    id: number,
-    reqKey: string
+    id: number;
+    reqKey: string;
 }
 
 @Injectable()
@@ -281,7 +281,7 @@ export class TransferHttpCacheInterceptor implements HttpInterceptor {
                             )
                         )
                 )
-            )
+            );
     }
 
     /**
@@ -321,7 +321,7 @@ export class TransferHttpCacheInterceptor implements HttpInterceptor {
                             )
                         )
                 )
-            )
+            );
     }
 
     /**
@@ -452,7 +452,7 @@ export class TransferHttpCacheInterceptor implements HttpInterceptor {
                             )
                         )
                 )
-            )
+            );
     }
 
     /**
