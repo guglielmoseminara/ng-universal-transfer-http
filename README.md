@@ -160,6 +160,10 @@ export class AppModule {
 Now, when you launch your application with `ng serve` all will work fine.
 
 ## Change History
+* v5.2.1 (2017-12-20)
+    * `Angular v5.1.1+`
+    * Fix to handle `HttpErrorResponse`
+    * Documentation
 * v5.2.0 (2017-12-12)
     * `Angular v5.1.0+`
     * `RxJS v5.5.5+`

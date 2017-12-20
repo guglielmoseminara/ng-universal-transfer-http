@@ -1,5 +1,8 @@
 import { ApplicationRef, Inject, Injectable, Optional, PLATFORM_ID } from '@angular/core';
-import { HttpEvent, HttpHandler, HttpHeaders, HttpInterceptor, HttpRequest, HttpResponse } from '@angular/common/http';
+import {
+    HttpErrorResponse, HttpEvent, HttpHandler, HttpHeaders, HttpInterceptor, HttpRequest,
+    HttpResponse
+} from '@angular/common/http';
 import { TransferState, makeStateKey, StateKey } from '@angular/platform-browser';
 import { isPlatformServer } from '@angular/common';
 
@@ -19,6 +22,7 @@ import { NG_UNIVERSAL_TRANSFER_HTTP_CONFIG } from '../../tokens';
  */
 interface TransferHttpResponse {
     body?: any | null;
+    error?: any | null;
     headers?: { [k: string]: string[] };
     status?: number;
     statusText?: string;
@@ -404,14 +408,35 @@ export class TransferHttpCacheInterceptor implements HttpInterceptor {
         return hasKey
             .pipe(
                 filter(_ => !!_),
-                map(_ => this._transferState.get(storeKey, {} as TransferHttpResponse)),
-                map((response: TransferHttpResponse) => new HttpResponse<any>({
-                    body: response.body,
-                    headers: new HttpHeaders(response.headers),
-                    status: response.status,
-                    statusText: response.statusText,
-                    url: response.url,
-                }))
+                map(_ => of(this._transferState.get(storeKey, {} as TransferHttpResponse))),
+                flatMap((obs: Observable<TransferHttpResponse>) =>
+                    mergeStatic(
+                        obs
+                            .pipe(
+                                filter(_ => _.status < 400),
+                                map((response: TransferHttpResponse) => new HttpResponse<any>({
+                                    body: response.body,
+                                    headers: new HttpHeaders(response.headers),
+                                    status: response.status,
+                                    statusText: response.statusText,
+                                    url: response.url,
+                                }))
+                            ),
+                        obs
+                            .pipe(
+                                filter(_ => _.status >= 400),
+                                flatMap((response: TransferHttpResponse) =>
+                                    _throw(new HttpErrorResponse({
+                                        error: response.error,
+                                        headers: new HttpHeaders(response.headers),
+                                        status: response.status,
+                                        statusText: response.statusText,
+                                        url: response.url,
+                                    }))
+                                )
+                            )
+                    )
+                )
             );
     }
 
@@ -438,17 +463,29 @@ export class TransferHttpCacheInterceptor implements HttpInterceptor {
                     next.handle(req)
                         .pipe(
                             tap((event: HttpEvent<any>) =>
-                                of(event)
-                                    .pipe(
-                                        filter(evt => evt instanceof HttpResponse)
-                                    )
-                                    .subscribe((evt: HttpResponse<any>) => this._transferState.set(storeKey, {
-                                        body: evt.body,
-                                        headers: this._getHeadersMap(evt.headers),
-                                        status: evt.status,
-                                        statusText: evt.statusText,
-                                        url: evt.url!,
-                                    }))
+                                    of(event)
+                                        .pipe(
+                                            filter(evt => evt instanceof HttpResponse)
+                                        )
+                                        .subscribe((evt: HttpResponse<any>) => this._transferState.set(storeKey, {
+                                            body: evt.body,
+                                            headers: this._getHeadersMap(evt.headers),
+                                            status: evt.status,
+                                            statusText: evt.statusText,
+                                            url: evt.url!,
+                                        })),
+                                (error: any) =>
+                                    of(error)
+                                        .pipe(
+                                            filter(err => err instanceof HttpErrorResponse)
+                                        )
+                                        .subscribe((err: HttpErrorResponse) => this._transferState.set(storeKey, {
+                                            error: err.error,
+                                            headers: this._getHeadersMap(err.headers),
+                                            status: err.status,
+                                            statusText: err.statusText,
+                                            url: err.url!,
+                                        }))
                             )
                         )
                 )
