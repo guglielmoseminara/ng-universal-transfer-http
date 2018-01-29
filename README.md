@@ -160,6 +160,9 @@ export class AppModule {
 Now, when you launch your application with `ng serve` all will work fine.
 
 ## Change History
+* v5.2.2 (2018-01-29)
+    * `Angular v5.2.2+`
+    * Latest packages' versions
 * v5.2.1 (2017-12-20)
     * `Angular v5.1.1+`
     * Fix to handle `HttpErrorResponse`
