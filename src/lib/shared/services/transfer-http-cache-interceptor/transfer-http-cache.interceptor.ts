@@ -14,6 +14,7 @@ import { first, filter, flatMap, map, tap, defaultIfEmpty } from 'rxjs/operators
 import { mergeStatic } from 'rxjs/operators/merge';
 
 import * as createHash from 'create-hash/browser';
+import * as circularJSON from 'circular-json';
 
 import { NG_UNIVERSAL_TRANSFER_HTTP_CONFIG } from '../../tokens';
 
@@ -217,7 +218,7 @@ export class TransferHttpCacheInterceptor implements HttpInterceptor {
      * @private
      */
     private _clientKey(req: HttpRequest<any>): Observable<StateKey<TransferHttpResponse>> {
-        return of(this._createHash(JSON.stringify(req)))
+        return of(this._createHash(circularJSON.stringify(req)))
             .pipe(
                 flatMap(reqKey =>
                     this._getServerStateData()
@@ -338,7 +339,7 @@ export class TransferHttpCacheInterceptor implements HttpInterceptor {
      * @private
      */
     private _serverKey(req: HttpRequest<any>): Observable<StateKey<TransferHttpResponse>> {
-        return of(this._createHash(JSON.stringify(req)))
+        return of(this._createHash(circularJSON.stringify(req)))
             .pipe(
                 tap(reqKey => this._storeServerStateData(reqKey)),
                 map(reqKey => this._createHash(`${reqKey}_${this._id}`)),

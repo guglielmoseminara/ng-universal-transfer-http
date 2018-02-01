@@ -160,6 +160,10 @@ export class AppModule {
 Now, when you launch your application with `ng serve` all will work fine.
 
 ## Change History
+* v5.2.3 (2018-02-01)
+    * `Angular v5.2.3+`
+    * Latest packages' versions
+    * Fix `circular JSON` stringify 
 * v5.2.2 (2018-01-29)
     * `Angular v5.2.2+`
     * Latest packages' versions
@@ -214,6 +218,6 @@ Now, when you launch your application with `ng serve` all will work fine.
 
 ## License
 
-Copyright (c) 2017 **Hapiness** Licensed under the [MIT license](https://github.com/hapinessjs/hapiness/blob/master/LICENSE.md).
+Copyright (c) 2018 **Hapiness** Licensed under the [MIT license](https://github.com/hapinessjs/hapiness/blob/master/LICENSE.md).
 
 [Back to top](#installation)
