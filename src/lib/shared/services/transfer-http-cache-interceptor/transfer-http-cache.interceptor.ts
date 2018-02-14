@@ -1,4 +1,4 @@
-import { ApplicationRef, Inject, Injectable, Optional, PLATFORM_ID } from '@angular/core';
+import { ApplicationRef, Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import {
     HttpErrorResponse, HttpEvent, HttpHandler, HttpHeaders, HttpInterceptor, HttpRequest,
     HttpResponse
@@ -16,7 +16,7 @@ import { mergeStatic } from 'rxjs/operators/merge';
 import * as createHash from 'create-hash/browser';
 import * as circularJSON from 'circular-json';
 
-import { NG_UNIVERSAL_TRANSFER_HTTP_CONFIG } from '../../tokens';
+import { TransferHttpCacheConfigService } from '../transfer-http-cache-config';
 
 /**
  * Response interface
@@ -55,11 +55,11 @@ export class TransferHttpCacheInterceptor implements HttpInterceptor {
      * @param {ApplicationRef} _appRef
      * @param {TransferState} _transferState
      * @param {Object} _platformId
-     * @param {boolean} _prodMode
+     * @param {TransferHttpCacheConfigService} _configService
      */
     constructor(private _appRef: ApplicationRef, private _transferState: TransferState,
                 @Inject(PLATFORM_ID) private _platformId: Object,
-                @Optional() @Inject(NG_UNIVERSAL_TRANSFER_HTTP_CONFIG) private _prodMode: boolean) {
+                private _configService: TransferHttpCacheConfigService) {
         this._isCacheActive = true;
         this._id = 0;
         this._serverStateDataStoreKey = makeStateKey<ServerStateData[]>('server_state_data');
@@ -68,9 +68,9 @@ export class TransferHttpCacheInterceptor implements HttpInterceptor {
         // Stop using the cache if the application has stabilized, indicating initial rendering is complete
         // or if we are in development mode.
         mergeStatic(
-            of(this._prodMode)
+            of(this._configService.config.prodMode)
                 .pipe(
-                    filter(_ => _ !== null && _ !== true),
+                    filter(_ => !_),
                     tap(_ =>
                         console.log('TransferHttpCacheModule is in the development mode. ' +
                             'Enable the production mode with Server Side Rendering.')
@@ -218,8 +218,9 @@ export class TransferHttpCacheInterceptor implements HttpInterceptor {
      * @private
      */
     private _clientKey(req: HttpRequest<any>): Observable<StateKey<TransferHttpResponse>> {
-        return of(this._createHash(circularJSON.stringify(req)))
+        return this._requestFormated(req)
             .pipe(
+                map((_: HttpRequest<any>) => this._createHash(circularJSON.stringify(_))),
                 flatMap(reqKey =>
                     this._getServerStateData()
                         .pipe(
@@ -339,8 +340,9 @@ export class TransferHttpCacheInterceptor implements HttpInterceptor {
      * @private
      */
     private _serverKey(req: HttpRequest<any>): Observable<StateKey<TransferHttpResponse>> {
-        return of(this._createHash(circularJSON.stringify(req)))
+        return this._requestFormated(req)
             .pipe(
+                map((_: HttpRequest<any>) => this._createHash(circularJSON.stringify(_))),
                 tap(reqKey => this._storeServerStateData(reqKey)),
                 map(reqKey => this._createHash(`${reqKey}_${this._id}`)),
                 map(key => makeStateKey<TransferHttpResponse>(key))
@@ -517,5 +519,47 @@ export class TransferHttpCacheInterceptor implements HttpInterceptor {
      */
     private _createHash(data: any): string {
         return createHash('sha256').update(data).digest('hex');
+    }
+
+    /**
+     * Returns HttpRequest without scheme inside url and urlWithParams
+     *
+     * @param {HttpRequest<any>} req
+     *
+     * @return {HttpRequest<any>}
+     *
+     * @private
+     */
+    private _skipScheme(req: HttpRequest<any>): HttpRequest<any> {
+        const url = req.url.split('://')[1];
+        const urlWithParams = req.urlWithParams.split('://')[1];
+        return Object.assign({}, req, { url, urlWithParams }) as HttpRequest<any>;
+    }
+
+    /**
+     * Returns the good request object to create hash
+     *
+     * @param {HttpRequest<any>} req
+     *
+     * @return {Observable<HttpRequest<any>>}
+     *
+     * @private
+     */
+    private _requestFormated(req: HttpRequest<any>): Observable<HttpRequest<any>> {
+        return of(of(this._configService.config.skipUrlSchemeWhenCaching))
+            .pipe(
+                flatMap((obs: Observable<boolean>) =>
+                    mergeStatic(
+                        obs.pipe(
+                            filter(_ => !!_),
+                            map(_ => this._skipScheme(req))
+                        ),
+                        obs.pipe(
+                            filter(_ => !_),
+                            map(_ => req)
+                        )
+                    )
+                )
+            );
     }
 }
