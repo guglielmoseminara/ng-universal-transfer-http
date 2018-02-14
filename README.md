@@ -148,7 +148,7 @@ import { AppComponent } from './app.component';
     // the page.
     BrowserModule.withServerTransition({ appId: 'ng-universal-example' }),
     // Add TransferHttpCacheModule to install a Http interceptor and activate it only for production mode
-    TransferHttpCacheModule.enableOnProdMode(environment.production)
+    TransferHttpCacheModule.withConfig({prodMode: environment.production})
   ],
   providers: [],
   bootstrap: [AppComponent]
@@ -159,7 +159,48 @@ export class AppModule {
 
 Now, when you launch your application with `ng serve` all will work fine.
 
+
+## Skip scheme for storage's key
+
+Sometimes, when you're in `server` side rendering, you're in **internal environment** and calls have not the same scheme (`https` for client calls and `http`for server calls) so when you come back in `browser`, request are not cached if you don't skip the scheme in storage's key generation.
+
+To solve it, we add an option and you must to declare it like this:
+
+```typescript
+import { BrowserModule } from '@angular/platform-browser';
+import { NgModule } from '@angular/core';
+import { TransferHttpCacheModule } from '@hapiness/ng-universal-transfer-http';
+import { environment } from '../environments/environment';
+
+import { AppComponent } from './app.component';
+
+@NgModule({
+  declarations: [
+    AppComponent
+  ],
+  imports: [
+    // Add .withServerTransition() to support Universal rendering.
+    // The application ID can be any identifier which is unique on
+    // the page.
+    BrowserModule.withServerTransition({ appId: 'ng-universal-example' }),
+    // Add TransferHttpCacheModule to install a Http interceptor and skip scheme in storage's key generation
+    TransferHttpCacheModule.withConfig({skipUrlSchemeWhenCaching: true})
+  ],
+  providers: [],
+  bootstrap: [AppComponent]
+})
+export class AppModule {
+}
+```
+
+This option is compatible with `prodMode` option.
+
 ## Change History
+* v6.0.0 (2018-02-14)
+    * `Angular v5.2.5+`
+    * Latest packages' versions
+    * Change module `static` method from `enableOnProdMode` to `withConfig` and add `TransferHttpCacheConfig` parameter
+    * Documentation
 * v5.2.3 (2018-02-01)
     * `Angular v5.2.3+`
     * Latest packages' versions
