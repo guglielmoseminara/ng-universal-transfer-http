@@ -1,4 +1,4 @@
 export interface TransferHttpCacheConfig {
     prodMode?: boolean;
-    skipUrlSchemeWhenCaching?: boolean;
+    headerNameToOverrideUrlInKeyCachingGeneration?: string;
 }

@@ -10,7 +10,7 @@ import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 import { _throw } from 'rxjs/observable/throw';
 import { from } from 'rxjs/observable/from';
-import { first, filter, flatMap, map, tap, defaultIfEmpty } from 'rxjs/operators';
+import { first, filter, flatMap, map, tap, defaultIfEmpty, toArray } from 'rxjs/operators';
 import { mergeStatic } from 'rxjs/operators/merge';
 
 import * as createHash from 'create-hash/browser';
@@ -522,18 +522,72 @@ export class TransferHttpCacheInterceptor implements HttpInterceptor {
     }
 
     /**
-     * Returns HttpRequest without scheme inside url and urlWithParams
+     * Returns HttpRequest with value of header inside url & urlWithParams
      *
      * @param {HttpRequest<any>} req
+     * @param {string} headerName
      *
      * @return {HttpRequest<any>}
      *
      * @private
      */
-    private _skipScheme(req: HttpRequest<any>): HttpRequest<any> {
-        const url = req.url.split('://')[1];
-        const urlWithParams = req.urlWithParams.split('://')[1];
-        return Object.assign({}, req, { url, urlWithParams }) as HttpRequest<any>;
+    private _replaceWithHeader(req: HttpRequest<any>, headerName: string): Observable<HttpRequest<any>> {
+        return of(of(this._getHeadersMap(req.headers)[headerName]))
+            .pipe(
+                flatMap((obs: Observable<string[]>) =>
+                    mergeStatic(
+                        obs.pipe(
+                            filter((_: string[]) => !!_ && !!_.length),
+                            map((_: string[]) => of(_[_.length - 1])),
+                            flatMap((o: Observable<string>) =>
+                                mergeStatic(
+                                    o.pipe(
+                                        filter(_ => !!_),
+                                        flatMap((headerValue: string) =>
+                                            mergeStatic(
+                                                this._formatUrlWithHeaderValue(req.url, headerValue),
+                                                this._formatUrlWithHeaderValue(req.urlWithParams, headerValue),
+                                            ).pipe(
+                                                toArray(),
+                                                map(_ => Object.assign({}, req, { url: _[0], urlWithParams: _[1] }) as HttpRequest<any>)
+                                            )
+                                        )
+                                    ),
+                                    o.pipe(
+                                        filter(_ => !_),
+                                        flatMap(_ =>
+                                            _throw(new Error(`Missing header '${headerName}' value inside request to generate state key`))
+                                        )
+                                    )
+                                )
+                            )
+                        ),
+                        obs.pipe(
+                            filter(_ => !_ || !_.length),
+                            flatMap(_ => _throw(new Error(`Missing header '${headerName}' value inside request to generate state key`)))
+                        )
+                    )
+                )
+            );
+    }
+
+    /**
+     * Replace url with header value
+     *
+     * @param {string} url
+     * @param {string} headerValue
+     *
+     * @return {Observable<string>}
+     *
+     * @private
+     */
+    private _formatUrlWithHeaderValue(url: string, headerValue: string): Observable<string> {
+        return of(url)
+            .pipe(
+                map((_: string) => _.split('://')[1].split('/')),
+                map((_: string[]) => _.map((s, i) => i === 0 ? headerValue : s)),
+                map((_: string[]) => _.join('/'))
+            );
     }
 
     /**
@@ -546,13 +600,13 @@ export class TransferHttpCacheInterceptor implements HttpInterceptor {
      * @private
      */
     private _requestFormated(req: HttpRequest<any>): Observable<HttpRequest<any>> {
-        return of(of(this._configService.config.skipUrlSchemeWhenCaching))
+        return of(of(this._configService.config.headerNameToOverrideUrlInKeyCachingGeneration))
             .pipe(
-                flatMap((obs: Observable<boolean>) =>
+                flatMap((obs: Observable<string>) =>
                     mergeStatic(
                         obs.pipe(
                             filter(_ => !!_),
-                            map(_ => this._skipScheme(req))
+                            flatMap(_ => this._replaceWithHeader(req, _))
                         ),
                         obs.pipe(
                             filter(_ => !_),

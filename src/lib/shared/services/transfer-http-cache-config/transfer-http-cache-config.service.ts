@@ -13,7 +13,7 @@ export class TransferHttpCacheConfigService {
      * @param {TransferHttpCacheConfig} _transferHttpCacheConfig
      */
     constructor(@Optional() @Inject(NG_UNIVERSAL_TRANSFER_HTTP_CONFIG) private _transferHttpCacheConfig: TransferHttpCacheConfig) {
-        this._config = { prodMode: true, skipUrlSchemeWhenCaching: false };
+        this._config = { prodMode: true };
         if (this._transferHttpCacheConfig !== null) {
             Object.assign(this._config, this._transferHttpCacheConfig);
         }
