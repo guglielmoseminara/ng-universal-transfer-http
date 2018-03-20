@@ -196,6 +196,11 @@ export class AppModule {
 This option is compatible with `prodMode` option.
 
 ## Change History
+* v7.0.0 (2018-03-20)
+    * `Angular v5.2.9+`
+    * Latest packages' versions
+    * Change `module config` parameters to delete `skipUrlSchemeWhenCaching` and replace with `headerNameToOverrideUrlInKeyCachingGeneration`
+    * Documentation
 * v6.0.0 (2018-02-14)
     * `Angular v5.2.5+`
     * Latest packages' versions
