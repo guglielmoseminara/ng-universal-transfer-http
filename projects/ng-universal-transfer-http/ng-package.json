@@ -7,7 +7,6 @@
     },
     "whitelistedNonPeerDependencies": [
         "circular-json",
-        "create-hash",
-        "@types/node"
+        "create-hash"
     ]
 }
