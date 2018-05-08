@@ -5,12 +5,10 @@ import { TransferHttpCacheConfig } from '../../interfaces';
 @Injectable()
 export class TransferHttpCacheConfigService {
     // private property to store config
-    private _config: TransferHttpCacheConfig;
+    private readonly _config: TransferHttpCacheConfig;
 
     /**
      * Class constructor
-     *
-     * @param {TransferHttpCacheConfig} _transferHttpCacheConfig
      */
     constructor(@Optional() @Inject(NG_UNIVERSAL_TRANSFER_HTTP_CONFIG) private _transferHttpCacheConfig: TransferHttpCacheConfig) {
         this._config = { prodMode: true };
@@ -21,8 +19,6 @@ export class TransferHttpCacheConfigService {
 
     /**
      * Returns private property _config
-     *
-     * @return {TransferHttpCacheConfig}
      */
     get config(): TransferHttpCacheConfig {
         return this._config;

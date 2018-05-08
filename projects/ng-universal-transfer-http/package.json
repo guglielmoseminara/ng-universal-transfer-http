@@ -1,0 +1,56 @@
+{
+    "name": "@hapiness/ng-universal-transfer-http",
+    "version": "8.0.0",
+    "description": "TransferHttpCacheModule installs a Http interceptor that avoids duplicate HttpClient requests on the client",
+    "repository": {
+        "type": "git",
+        "url": "git+ssh://git@github.com/hapinessjs/ng-universal-transfer-http.git"
+    },
+    "keywords": [
+        "Angular",
+        "Library",
+        "Server",
+        "Transfer",
+        "HTTP",
+        "Cache",
+        "Module",
+        "AOT",
+        "JIT"
+    ],
+    "contributors": [
+        {
+            "name": "Julien Fauville",
+            "url": "https://github.com/Juneil"
+        },
+        {
+            "name": "Antoine Gomez",
+            "url": "https://github.com/antoinegomez"
+        },
+        {
+            "name": "Sébastien Ritz",
+            "url": "https://github.com/reptilbud"
+        },
+        {
+            "name": "Nicolas Jessel",
+            "url": "https://github.com/njl07"
+        }
+    ],
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/hapinessjs/ng-universal-transfer-http/issues"
+    },
+    "homepage": "https://github.com/hapinessjs/ng-universal-transfer-http#readme",
+    "dependencies": {
+        "circular-json": "^0.5.3",
+        "create-hash": "^1.2.0"
+    },
+    "peerDependencies": {
+        "@angular/common": "^6.0.0",
+        "@angular/core": "^6.0.0",
+        "@angular/platform-browser": "^6.0.0",
+        "rxjs": "^6.1.0"
+    },
+    "engines": {
+        "node": ">=7.0.0"
+    }
+}
