@@ -34,7 +34,7 @@ This project uses [Angular-CLI](https://github.com/angular/angular-cli) to gener
 
 `TransferHttpCacheModule` installs a **Http interceptor** that avoids duplicate `HttpClient` requests on the client.
 
-To have all explanation go [here](https://github.com/hapinessjs/ng-universal-transfer-http/blob/master/projects/ng-universal-transfer-http/README.md).
+To have all explanations go [here](https://github.com/hapinessjs/ng-universal-transfer-http/blob/master/projects/ng-universal-transfer-http/README.md).
 
 ## Maintainers
 
