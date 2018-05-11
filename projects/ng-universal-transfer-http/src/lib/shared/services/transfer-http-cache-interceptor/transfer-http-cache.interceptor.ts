@@ -10,7 +10,6 @@ import { Observable, of, throwError, from, merge } from 'rxjs';
 import { first, filter, flatMap, map, tap, defaultIfEmpty, toArray } from 'rxjs/operators';
 
 import CircularJSON from 'circular-json';
-import createHash from 'create-hash/browser';
 
 import { TransferHttpCacheConfigService } from '../transfer-http-cache-config';
 
@@ -430,10 +429,10 @@ export class TransferHttpCacheInterceptor implements HttpInterceptor {
     }
 
     /**
-     * Function to create sha256 hash
+     * Function to create base64 hash
      */
-    private _createHash(data: any): string {
-        return createHash('sha256').update(data).digest('hex');
+    private _createHash(data: string): string {
+        return btoa(unescape(encodeURIComponent(data)));
     }
 
     /**
