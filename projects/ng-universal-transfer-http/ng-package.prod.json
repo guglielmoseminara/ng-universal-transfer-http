@@ -6,6 +6,7 @@
     },
     "whitelistedNonPeerDependencies": [
         "circular-json",
-        "create-hash"
+        "create-hash",
+        "stream-browserify"
     ]
 }

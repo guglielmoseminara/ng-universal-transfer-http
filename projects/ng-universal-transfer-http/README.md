@@ -32,7 +32,7 @@
 
 This module is an enhancement of original [`TransferHttpCacheModule`](https://github.com/angular/universal/blob/master/modules/common) from `Angular Universal` team. He allows to cache **all type of requests** and not just `GET` and/or `HEAD`.
 
-It's written in full `RxJS` v6+
+It's written in full `RxJS` v6.1.0+
 
 ## Installation
 
@@ -109,10 +109,6 @@ export class AppServerModule {
 
 ### src/main.ts:
 
-`TransferHttpCacheModule` installs a provider to delay the **app bootstrap** process to ensure that the `DOM` content is loaded before state transfer initialization.
-
-Simply import the module into your project and you will no longer need to wrap your component bootstrap function in an `DOMContentLoaded` callback.
-
 ```typescript
 import { enableProdMode } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
@@ -124,8 +120,44 @@ if (environment.production) {
   enableProdMode();
 }
 
-platformBrowserDynamic().bootstrapModule(AppModule)
+document.addEventListener('DOMContentLoaded', () => {
+  platformBrowserDynamic().bootstrapModule(AppModule)
     .catch(err => console.log(err));
+});
+```
+
+### Polyfills:
+
+To create the storage key, we use [`create-hash`](https://github.com/crypto-browserify/createHash) module but `Angular-CLI` v6+ disable all `node` modules in **browser** builds so we must specify all polyfills manually.
+
+Add in `src/tsconfig.app.json` the path to `stream` browser version:
+
+```json
+{
+    "extends": "../tsconfig.json",
+    "compilerOptions": {
+        "outDir": "../out-tsc/app",
+        "module": "es2015",
+        "types": [],
+        "paths": {
+            "stream": [
+                "node_modules/stream-browserify"
+            ]
+        }
+    },
+    "exclude": [
+        "src/test.ts",
+        "**/*.spec.ts"
+    ]
+}
+```
+
+Add at the end of `src/polyfills.ts` all required node modules polyfills:
+
+```typescript
+(window as any).global = window;
+(window as any).process = require('process');
+(window as any).Buffer = require('buffer').Buffer;
 ```
 
 ## Development mode compatibility
@@ -198,9 +230,15 @@ export class AppModule {
 This option is compatible with `prodMode` option.
 
 ## Change History
+* v8.0.1 (2018-05-13)
+    * `Angular v6.0.1+`
+    * Fix `createHash` method call for build process in `Angular` application with polyfills
+    * Delete `domContentLoadedFactory` provider for universal rendering
+    * Fix `AOT` build in `Angular` application with delete barrels
+    * Documentation
 * v8.0.0 (2018-05-08)
     * `Angular v6.0.0+`
-    * `RxJS v6.0.0+`
+    * `RxJS v6.1.0+`
     * Change build process with to `Angular-CLI` library generation
     * Documentation
 

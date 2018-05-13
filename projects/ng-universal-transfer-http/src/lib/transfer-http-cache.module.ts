@@ -1,20 +1,15 @@
-import { DOCUMENT } from '@angular/common';
-import { APP_INITIALIZER, ModuleWithProviders, NgModule } from '@angular/core';
+import { ModuleWithProviders, NgModule } from '@angular/core';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { BrowserTransferStateModule } from '@angular/platform-browser';
-import {
-    TransferHttpCacheInterceptor,
-    NG_UNIVERSAL_TRANSFER_HTTP_CONFIG,
-    TransferHttpCacheConfig,
-    TransferHttpCacheConfigService,
-    domContentLoadedFactory
-} from './shared';
+import { TransferHttpCacheConfigService } from './shared/services/transfer-http-cache-config/transfer-http-cache-config.service';
+import { TransferHttpCacheInterceptor } from './shared/services/transfer-http-cache-interceptor/transfer-http-cache.interceptor';
+import { TransferHttpCacheConfig } from './shared/global/interfaces';
+import { NG_UNIVERSAL_TRANSFER_HTTP_CONFIG } from './shared/global/tokens';
 
 @NgModule({
     imports: [ BrowserTransferStateModule ],
     providers: [
         TransferHttpCacheConfigService,
-        { provide: APP_INITIALIZER, useFactory: domContentLoadedFactory, multi: true, deps: [ DOCUMENT ] },
         { provide: HTTP_INTERCEPTORS, useClass: TransferHttpCacheInterceptor, multi: true },
     ],
 })

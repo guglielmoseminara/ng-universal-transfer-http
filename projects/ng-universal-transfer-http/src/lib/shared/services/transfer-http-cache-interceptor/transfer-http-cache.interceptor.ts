@@ -10,9 +10,9 @@ import { Observable, of, throwError, from, merge } from 'rxjs';
 import { first, filter, flatMap, map, tap, defaultIfEmpty, toArray } from 'rxjs/operators';
 
 import CircularJSON from 'circular-json';
-import createHash from 'create-hash/browser';
+import createHash from 'create-hash';
 
-import { TransferHttpCacheConfigService } from '../transfer-http-cache-config';
+import { TransferHttpCacheConfigService } from '../transfer-http-cache-config/transfer-http-cache-config.service';
 
 /**
  * Response interface
@@ -69,7 +69,7 @@ export class TransferHttpCacheInterceptor implements HttpInterceptor {
                 ),
             this._appRef.isStable
                 .pipe(
-                    filter(_ => !!_),
+                    filter(_ => !!_)
                 )
         )
             .pipe(
