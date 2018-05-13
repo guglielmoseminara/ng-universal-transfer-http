@@ -1,6 +1,6 @@
 import { Inject, Injectable, Optional } from '@angular/core';
-import { NG_UNIVERSAL_TRANSFER_HTTP_CONFIG } from '../../tokens';
-import { TransferHttpCacheConfig } from '../../interfaces';
+import { NG_UNIVERSAL_TRANSFER_HTTP_CONFIG } from '../../global/tokens';
+import { TransferHttpCacheConfig } from '../../global/interfaces';
 
 @Injectable()
 export class TransferHttpCacheConfigService {

@@ -6,6 +6,8 @@
         "entryFile": "src/public_api.ts"
     },
     "whitelistedNonPeerDependencies": [
-        "circular-json"
+        "circular-json",
+        "create-hash",
+        "stream-browserify"
     ]
 }

@@ -10,7 +10,9 @@
         "@angular/core": "^6.0.1",
         "@angular/platform-browser": "^6.0.1",
         "circular-json": "^0.5.4",
+        "create-hash": "^1.2.0",
         "rxjs": "^6.1.0",
+        "stream-browserify": "^2.0.1",
         "zone.js": "^0.8.26"
     },
     "devDependencies": {
@@ -21,7 +23,7 @@
         "@angular/language-service": "^6.0.1",
         "@types/jasmine": "~2.8.6",
         "@types/jasminewd2": "~2.0.3",
-        "@types/node": "~10.0.4",
+        "@types/node": "~10.0.8",
         "codelyzer": "~4.3.0",
         "jasmine-core": "~2.99.1",
         "jasmine-spec-reporter": "~4.2.1",

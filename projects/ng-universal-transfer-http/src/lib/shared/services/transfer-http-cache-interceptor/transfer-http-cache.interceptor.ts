@@ -10,8 +10,9 @@ import { Observable, of, throwError, from, merge } from 'rxjs';
 import { first, filter, flatMap, map, tap, defaultIfEmpty, toArray } from 'rxjs/operators';
 
 import CircularJSON from 'circular-json';
+import createHash from 'create-hash';
 
-import { TransferHttpCacheConfigService } from '../transfer-http-cache-config';
+import { TransferHttpCacheConfigService } from '../transfer-http-cache-config/transfer-http-cache-config.service';
 
 /**
  * Response interface
@@ -68,7 +69,7 @@ export class TransferHttpCacheInterceptor implements HttpInterceptor {
                 ),
             this._appRef.isStable
                 .pipe(
-                    filter(_ => !!_),
+                    filter(_ => !!_)
                 )
         )
             .pipe(
@@ -429,10 +430,10 @@ export class TransferHttpCacheInterceptor implements HttpInterceptor {
     }
 
     /**
-     * Function to create base64 hash
+     * Function to create sha256 hash
      */
-    private _createHash(data: string): string {
-        return btoa(unescape(encodeURIComponent(data)));
+    private _createHash(data: any): string {
+        return createHash('sha256').update(data).digest('hex');
     }
 
     /**
