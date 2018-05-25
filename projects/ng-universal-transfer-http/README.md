@@ -32,7 +32,7 @@
 
 This module is an enhancement of original [`TransferHttpCacheModule`](https://github.com/angular/universal/blob/master/modules/common) from `Angular Universal` team. He allows to cache **all type of requests** and not just `GET` and/or `HEAD`.
 
-It's written in full `RxJS` v6.1.0+
+It's written in full `RxJS` v6.2.0+
 
 ## Installation
 
@@ -230,6 +230,9 @@ export class AppModule {
 This option is compatible with `prodMode` option.
 
 ## Change History
+* v8.0.2 (2018-05-25)
+    * `Angular v6.0.3+`
+    * Documentation
 * v8.0.1 (2018-05-13)
     * `Angular v6.0.1+`
     * Fix `createHash` method call for build process in `Angular` application with polyfills

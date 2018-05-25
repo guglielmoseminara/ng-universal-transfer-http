@@ -1,6 +1,6 @@
 {
     "name": "@hapiness/ng-universal-transfer-http",
-    "version": "8.0.1",
+    "version": "8.0.2",
     "description": "TransferHttpCacheModule installs a Http interceptor that avoids duplicate HttpClient requests on the client",
     "repository": {
         "type": "git",
@@ -46,10 +46,10 @@
         "stream-browserify": "^2.0.1"
     },
     "peerDependencies": {
-        "@angular/common": "^6.0.1",
-        "@angular/core": "^6.0.1",
-        "@angular/platform-browser": "^6.0.1",
-        "rxjs": "^6.1.0"
+        "@angular/common": "^6.0.3",
+        "@angular/core": "^6.0.3",
+        "@angular/platform-browser": "^6.0.3",
+        "rxjs": "^6.2.0"
     },
     "engines": {
         "node": ">=7.0.0"
