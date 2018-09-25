@@ -183,7 +183,7 @@ export class TransferHttpCacheInterceptor implements HttpInterceptor {
      * Function to get state data and create client key for current request
      */
     private _clientKey(req: HttpRequest<any>): Observable<StateKey<TransferHttpResponse>> {
-        return this._requestFormated(req)
+        return this._requestFormatted(req)
             .pipe(
                 map((_: HttpRequest<any>) => this._createHash(CircularJSON.stringify(_))),
                 flatMap(reqKey =>
@@ -287,7 +287,7 @@ export class TransferHttpCacheInterceptor implements HttpInterceptor {
      * Function to create server key and store state data for current request
      */
     private _serverKey(req: HttpRequest<any>): Observable<StateKey<TransferHttpResponse>> {
-        return this._requestFormated(req)
+        return this._requestFormatted(req)
             .pipe(
                 map((_: HttpRequest<any>) => this._createHash(CircularJSON.stringify(_))),
                 tap(reqKey => this._storeServerStateData(reqKey)),
@@ -499,7 +499,7 @@ export class TransferHttpCacheInterceptor implements HttpInterceptor {
     /**
      * Returns the good request object to create hash
      */
-    private _requestFormated(req: HttpRequest<any>): Observable<HttpRequest<any>> {
+    private _requestFormatted(req: HttpRequest<any>): Observable<HttpRequest<any>> {
         return of(of(this._configService.config.headerNameToOverrideUrlInKeyCachingGeneration))
             .pipe(
                 flatMap((obs: Observable<string>) =>
