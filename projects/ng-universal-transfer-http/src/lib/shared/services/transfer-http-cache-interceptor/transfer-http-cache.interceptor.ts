@@ -1,16 +1,21 @@
-import { ApplicationRef, Inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { isPlatformServer } from '@angular/common';
 import {
-    HttpErrorResponse, HttpEvent, HttpHandler, HttpHeaders, HttpInterceptor, HttpRequest,
+    HttpErrorResponse,
+    HttpEvent,
+    HttpHandler,
+    HttpHeaders,
+    HttpInterceptor,
+    HttpRequest,
     HttpResponse
 } from '@angular/common/http';
-import { TransferState, makeStateKey, StateKey } from '@angular/platform-browser';
-import { isPlatformServer } from '@angular/common';
+import { ApplicationRef, Inject, Injectable, PLATFORM_ID } from '@angular/core';
+import { makeStateKey, StateKey, TransferState } from '@angular/platform-browser';
 
-import { Observable, of, throwError, from, merge } from 'rxjs';
-import { first, filter, flatMap, map, tap, defaultIfEmpty, toArray } from 'rxjs/operators';
-
-import CircularJSON from 'circular-json';
 import createHash from 'create-hash';
+import { stringify } from 'flatted/esm';
+
+import { from, merge, Observable, of, throwError } from 'rxjs';
+import { defaultIfEmpty, filter, first, flatMap, map, tap, toArray } from 'rxjs/operators';
 
 import { TransferHttpCacheConfigService } from '../transfer-http-cache-config/transfer-http-cache-config.service';
 
@@ -185,7 +190,7 @@ export class TransferHttpCacheInterceptor implements HttpInterceptor {
     private _clientKey(req: HttpRequest<any>): Observable<StateKey<TransferHttpResponse>> {
         return this._requestFormatted(req)
             .pipe(
-                map((_: HttpRequest<any>) => this._createHash(CircularJSON.stringify(_))),
+                map((_: HttpRequest<any>) => this._createHash(stringify(_))),
                 flatMap(reqKey =>
                     this._getServerStateData()
                         .pipe(
@@ -289,7 +294,7 @@ export class TransferHttpCacheInterceptor implements HttpInterceptor {
     private _serverKey(req: HttpRequest<any>): Observable<StateKey<TransferHttpResponse>> {
         return this._requestFormatted(req)
             .pipe(
-                map((_: HttpRequest<any>) => this._createHash(CircularJSON.stringify(_))),
+                map((_: HttpRequest<any>) => this._createHash(stringify(_))),
                 tap(reqKey => this._storeServerStateData(reqKey)),
                 map(reqKey => this._createHash(`${reqKey}_${this._id}`)),
                 map(key => makeStateKey<TransferHttpResponse>(key))

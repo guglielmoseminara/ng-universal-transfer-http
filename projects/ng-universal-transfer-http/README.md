@@ -32,7 +32,7 @@
 
 This module is an enhancement of original [`TransferHttpCacheModule`](https://github.com/angular/universal/blob/master/modules/common) from `Angular Universal` team. He allows to cache **all type of requests** and not just `GET` and/or `HEAD`.
 
-It's written in full `RxJS` v6.3.2+
+It's written in full `RxJS` v6.3.3+
 
 ## Installation
 
@@ -137,7 +137,6 @@ Add in `src/tsconfig.app.json` the path to `stream` browser version:
     "extends": "../tsconfig.json",
     "compilerOptions": {
         "outDir": "../out-tsc/app",
-        "module": "es2015",
         "types": [],
         "paths": {
             "stream": [
@@ -230,6 +229,10 @@ export class AppModule {
 This option is compatible with `prodMode` option.
 
 ## Change History
+* v9.0.0 (2018-10-31)
+    * `Angular v7.0.1+`
+    * Latest packages' versions
+    * Documentation
 * v8.1.1 (2018-09-24)
     * `Angular v6.1.8+`
     * Fix typo
